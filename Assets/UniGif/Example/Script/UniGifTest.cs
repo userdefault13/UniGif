@@ -22,6 +22,7 @@ public class UniGifTest : MonoBehaviour
     {
         if (m_mutex || m_uniGifImage == null || string.IsNullOrEmpty(m_inputField.text))
         {
+            Debug.LogError("Mutex is active, UniGifImage is null, or input field is empty.");
             return;
         }
 
@@ -31,7 +32,19 @@ public class UniGifTest : MonoBehaviour
 
     private IEnumerator ViewGifCoroutine()
     {
-        yield return StartCoroutine(m_uniGifImage.SetGifFromUrlCoroutine(m_inputField.text));
+        string filePath = m_inputField.text;
+
+        // Log the file path to help with debugging
+        Debug.Log($"Attempting to load GIF from file path: {filePath}");
+
+        if (string.IsNullOrEmpty(filePath))
+        {
+            Debug.LogError("The file path from InputField is empty.");
+            m_mutex = false;
+            yield break;
+        }
+
+        yield return StartCoroutine(m_uniGifImage.SetGifFromFilePathCoroutine(filePath));
         m_mutex = false;
     }
 }
